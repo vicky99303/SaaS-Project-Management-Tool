@@ -11,31 +11,10 @@ if (error.value) {
 }
 
 const user = computed(() => data.value?.data?.user || null)
-
 const route = useRoute()
 
-const breadcrumbNameMap: Record<string, string> = {
-  dashboard: 'Dashboard',
-  projects: 'Projects',
-  tasks: 'Tasks',
-  settings: 'Settings',
-}
-
-const breadcrumbs = computed(() => {
-  const pathSegments = route.path.split('/').filter(Boolean)
-
-  const items: Array<{ label: string; to: string }> = []
-  let currentPath = ''
-
-  for (const segment of pathSegments) {
-    currentPath += `/${segment}`
-    items.push({
-      label: breadcrumbNameMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1),
-      to: currentPath,
-    })
-  }
-
-  return items
+const pageBreadcrumbs = computed(() => {
+  return (route.meta.breadcrumbs as Array<{ label: string; to?: string }>) || []
 })
 
 const handleLogout = async () => {
@@ -101,16 +80,27 @@ const handleLogout = async () => {
     </header>
 
     <main class="mx-auto max-w-7xl px-6 pb-8 pt-28">
-      <div class="mb-6 flex items-center gap-2 text-sm text-slate-500">
-        <template v-for="(item, index) in breadcrumbs" :key="item.to">
+      <div
+        v-if="pageBreadcrumbs.length"
+        class="mb-6 flex items-center gap-2 text-sm text-slate-500"
+      >
+        <template v-for="(item, index) in pageBreadcrumbs" :key="`${item.label}-${index}`">
           <NuxtLink
+            v-if="item.to && index !== pageBreadcrumbs.length - 1"
             :to="item.to"
             class="hover:text-slate-900"
-            :class="{ 'font-semibold text-slate-900': index === breadcrumbs.length - 1 }"
           >
             {{ item.label }}
           </NuxtLink>
-          <span v-if="index !== breadcrumbs.length - 1">/</span>
+
+          <span
+            v-else
+            class="font-semibold text-slate-900"
+          >
+            {{ item.label }}
+          </span>
+
+          <span v-if="index !== pageBreadcrumbs.length - 1">/</span>
         </template>
       </div>
 

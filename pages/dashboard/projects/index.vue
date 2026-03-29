@@ -189,12 +189,18 @@ const submitProject = async () => {
             </p>
 
             <div class="flex gap-2">
-              <button class="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-white">
+              <NuxtLink
+                :to="`/dashboard/projects/${project.id}`"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-white"
+                >
                 View
-              </button>
-              <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800">
-                Edit
-              </button>
+             </NuxtLink>
+            <NuxtLink
+              :to="`/dashboard/projects/${project?.id}-edit`"
+              class="bg-slate-900 text-white px-4 py-2 rounded-lg"
+            >
+              Edit Project
+            </NuxtLink>
             </div>
           </div>
         </div>
