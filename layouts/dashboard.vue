@@ -14,7 +14,36 @@ const user = computed(() => data.value?.data?.user || null)
 const route = useRoute()
 
 const pageBreadcrumbs = computed(() => {
-  return (route.meta.breadcrumbs as Array<{ label: string; to?: string }>) || []
+  const metaCrumbs = route.meta.breadcrumbs as Array<{ label: string; to?: string }> | undefined
+
+  if (metaCrumbs?.length) {
+    return metaCrumbs
+  }
+
+  const segments = route.path.split('/').filter(Boolean)
+  const crumbs: Array<{ label: string; to?: string }> = []
+
+  let currentPath = ''
+
+  segments.forEach((segment, index) => {
+    currentPath += `/${segment}`
+
+    let label = segment
+
+    if (segment === 'dashboard') label = 'Dashboard'
+    else if (segment === 'projects') label = 'Projects'
+    else if (segment === 'tasks') label = 'Tasks'
+    else if (segment === 'settings') label = 'Settings'
+    else if (segment.endsWith('-edit')) label = 'Edit Project'
+    else if (index > 1 && segments[index - 1] === 'projects') label = 'Project Details'
+
+    crumbs.push({
+      label,
+      to: index === segments.length - 1 ? undefined : currentPath,
+    })
+  })
+
+  return crumbs
 })
 
 const handleLogout = async () => {
@@ -63,14 +92,14 @@ const handleLogout = async () => {
           </div>
 
           <button
-            class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
             @click="refresh()"
           >
             Refresh
           </button>
 
           <button
-            class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"
             @click="handleLogout"
           >
             Logout
@@ -82,9 +111,12 @@ const handleLogout = async () => {
     <main class="mx-auto max-w-7xl px-6 pb-8 pt-28">
       <div
         v-if="pageBreadcrumbs.length"
-        class="mb-6 flex items-center gap-2 text-sm text-slate-500"
+        class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500"
       >
-        <template v-for="(item, index) in pageBreadcrumbs" :key="`${item.label}-${index}`">
+        <template
+          v-for="(item, index) in pageBreadcrumbs"
+          :key="`${item.label}-${index}`"
+        >
           <NuxtLink
             v-if="item.to && index !== pageBreadcrumbs.length - 1"
             :to="item.to"

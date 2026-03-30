@@ -87,19 +87,19 @@ const submitTask = async () => {
       </div>
 
       <div class="flex gap-2">
-        <button
-          @click="refresh"
-          class="border px-4 py-2 rounded-lg"
-        >
-          Refresh
-        </button>
+       <button
+    @click="refresh"
+    class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+  >
+    Refresh
+  </button>
 
-       <NuxtLink
-        :to="`/dashboard/projects/${project?.id}-edit`"
-        class="bg-slate-900 text-white px-4 py-2 rounded-lg"
-      >
-        Edit Project
-      </NuxtLink>
+  <NuxtLink
+    :to="`/dashboard/projects/${project?.id}-edit`"
+    class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"
+  >
+    Edit Project
+  </NuxtLink>
       </div>
     </div>
 
